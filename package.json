@@ -1,0 +1,16 @@
+{
+  "name": "prisma-graphql-auto-resolver",
+  "version": "0.1.0",
+  "description": "Package that exposes a function to be used with PrismaClient and automatically resolve GraphQL queries",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "prisma",
+    "graphql",
+    "resolver"
+  ],
+  "author": "Pedro Martins",
+  "license": "ISC"
+}
