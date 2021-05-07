@@ -4,7 +4,7 @@
   "description": "Package that exposes a function to be used with PrismaClient and automatically resolve GraphQL queries",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [
     "prisma",
@@ -12,5 +12,11 @@
     "resolver"
   ],
   "author": "Pedro Martins",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "graphql-parse-fields": "^1.2.0"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3"
+  }
 }
