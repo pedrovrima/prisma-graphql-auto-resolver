@@ -13,22 +13,19 @@ const getSelect = (tree) => {
   return select;
 };
 
+const isEmpty = (obj) => {
+  return Object.keys(obj).length === 0;
+};
 
-const isEmpty =(obj)=>{
-    return Object.keys(obj).length===0
-}
-
-const filterEmptyObjects =(objects)=>{
-    return Object.keys(objects).reduce((obj_container, obj)=>{
-        if(isEmpty(objects[obj])){
-            return obj_container
-        }else{
-            return {...obj_container,[obj]:objects[obj]}
-        }
-    },{})
-
-}
-
+const filterEmptyObjects = (objects) => {
+  return Object.keys(objects).reduce((obj_container, obj) => {
+    if (isEmpty(objects[obj])) {
+      return obj_container;
+    } else {
+      return { ...obj_container, [obj]: objects[obj] };
+    }
+  }, {});
+};
 
 const getWhere = (objectKey, args) => {
   const where = Object.keys(args).reduce((where_container, arg) => {
@@ -38,49 +35,63 @@ const getWhere = (objectKey, args) => {
       return where_container;
     }
   }, {});
-  return where
+  return where;
 };
 
-const getInclude = (objectKey,tree,args,level)=>{
-    const include= Object.keys(tree).reduce((include_container,objs)=>{
-        if(isInclude(tree[objs])){
-            const where = getWhere(objs,args);
-            const select = getSelect(tree[objs]);
-            const include = getInclude(objs,tree[objs],args,level+1)
-            if(level==1){
-                return {...include}
-            } else{
-                if(where & !select & !include){
-                    return {...include_container,[objs]:"true"}
-                } else{
-                    return {...include_container,[objs]:filterEmptyObjects({where,include,select})}
-                }
-            }
-
+const getInclude = (objectKey, tree, args, level) => {
+  const include = Object.keys(tree).reduce((include_container, objs) => {
+    if (isInclude(tree[objs])) {
+      const where = getWhere(objs, args);
+      const select = getSelect(tree[objs]);
+      const include = getInclude(objs, tree[objs], args, level + 1);
+      if (level == 1) {
+        return { ...include };
+      } else {
+        if (where & !select & !include) {
+          return { ...include_container, [objs]: "true" };
+        } else {
+          return {
+            ...include_container,
+            [objs]: filterEmptyObjects({ where, include, select }),
+          };
         }
-        else{
-            return include_container
-        }
-
-    },{})
-    return include
-
-}
-
+      }
+    } else {
+      return include_container;
+    }
+  }, {});
+  return include;
+};
 
 const prismaTree = (tree, args) => {
-  const firstArgument = Object.keys(tree);
+  const firstArgument = Object.keys(tree)[0];
   const select = getSelect(tree[firstArgument]);
   const where = getWhere(firstArgument, args);
+  const include = getInclude("user", tree, args, 1);
   return { firstArgument, where, select, include };
 };
 
-const prismaAutoResolver = async (parent, args, context, info) => {
+const createQuery = (prismaTree,prisma) => {
+  const { firstArgument, where, select, include } = prismaTree;
+  return () => prisma[firstArgument].findMany({ select, where, include });
+};
+
+const prismaAutoResolver = async (parent, args, context, info,prisma) => {
   const query_tree = parseFields(info, false);
   const prismaTree = getPrismaTree(tree, args);
-  const prismaQuery = createQuery(prismaTree);
+  const prismaQuery = createQuery(prismaTree,prisma);
   const queryResult = await prismaQuery();
   return queryResult;
 };
 
-module.exports = { isInclude, isEmpty, filterEmptyObjects, getSelect, getWhere, getInclude, prismaTree, prismaAutoResolver };
+module.exports = {
+  isInclude,
+  isEmpty,
+  filterEmptyObjects,
+  getSelect,
+  getWhere,
+  getInclude,
+  prismaTree,
+  createQuery,
+  prismaAutoResolver,
+};
