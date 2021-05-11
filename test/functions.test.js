@@ -27,14 +27,13 @@ const args = { user: { id: 1 }, posts: { id: 2 } };
 const prismaTree = {
   firstArgument: "user",
   select: {
-    id: "true",
-    name: "true",
+    id: true,
+    name: true,
   },
-  include: {
+  select: {
     posts: {
-      select: { id: "true", date: "true" },
+      select: { id: true, date: true, category: { select: { id: true } } },
       where: { id: 2 },
-      include: { category: { select: { id: "true" } } },
     },
   },
   where: { id: 1 },
@@ -44,14 +43,13 @@ const Query = () =>
   prisma.user.findMany({
     where: { id: 1 },
     select: {
-      id: "true",
-      name: "true",
+      id: true,
+      name: true,
     },
-    include: {
+    select: {
       posts: {
-        select: { id: "true", date: "true" },
+        select: { id: true, date: true, category: { select: { id: true } } },
         where: { id: 2 },
-        include: { category: { select: { id: "true" } } },
       },
     },
   });
@@ -87,8 +85,8 @@ test("is not a include object", () => {
 
 // test("get select objects", () => {
 //   expect(prismaFunctions.getSelect(tree.user)).toEqual({
-//     id: "true",
-//     name: "true",
+//     id: true,
+//     name: true,
 //   });
 // });
 
@@ -102,14 +100,14 @@ test("get where from args", () => {
 
 test("getSelect", () => {
   expect(prismaFunctions.getSelect("user", tree, args, 1)).toEqual({
-    id: "true",
-    name: "true",
+    id: true,
+    name: true,
 
     posts: {
       select: {
-        id: "true",
-        date: "true",
-        category: { select: { id: "true" } },
+        id: true,
+        date: true,
+        category: { select: { id: true } },
       },
       where: { id: 2 },
     },
@@ -122,13 +120,13 @@ test("prismaTree", () => {
   expect(prismaFunctions.getPrismaTree(tree, args)).toEqual({
     firstArgument: "user",
     select: {
-      id: "true",
-      name: "true",
+      id: true,
+      name: true,
       posts: {
         select: {
-          id: "true",
-          date: "true",
-          category: { select: { id: "true" } },
+          id: true,
+          date: true,
+          category: { select: { id: true } },
         },
         where: { id: 2 },
       },
@@ -141,5 +139,6 @@ test("prismaTree", () => {
 
 test("createQuery", () => {
   const queryFunction = prismaFunctions.createQuery(prismaTree, prisma);
+  console.log(queryFunction());
   expect(queryFunction()).toEqual(Query());
 });
