@@ -1,4 +1,3 @@
-
 const isDeep = (object) => typeof object === "object";
 
 // const getSelect = (tree) => {
@@ -46,7 +45,7 @@ const getSelect = (objectKey, tree, args, level) => {
         return { ...select };
       } else {
         if (where & !select & !select) {
-          return { ...select_container, [objs]: "true" };
+          return { ...select_container, [objs]: true };
         } else {
           return {
             ...select_container,
@@ -55,7 +54,7 @@ const getSelect = (objectKey, tree, args, level) => {
         }
       }
     } else {
-      return { ...select_container, [objs]: "true" };
+      return { ...select_container, [objs]: true };
     }
   }, {});
   return select;
@@ -69,19 +68,17 @@ const getPrismaTree = (tree, args) => {
   return { firstArgument, where, select };
 };
 
-const createQuery = (prismaTree,prisma) => {
-  const { firstArgument, where, select, include } = prismaTree;
-  return () => prisma[firstArgument].findMany({ select, where, include });
+const createQuery = (prismaTree, prisma) => {
+  const { firstArgument, where, select } = prismaTree;
+  return () => prisma[firstArgument].findMany({ select, where });
 };
 
-
 module.exports = {
-    isDeep,
-    isEmpty,
-    filterEmptyObjects,
-    getSelect,
-    getWhere,
-    getPrismaTree,
-    createQuery,
-  };
-  
+  isDeep,
+  isEmpty,
+  filterEmptyObjects,
+  getSelect,
+  getWhere,
+  getPrismaTree,
+  createQuery,
+};
