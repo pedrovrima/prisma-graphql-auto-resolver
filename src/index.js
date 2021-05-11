@@ -7,7 +7,7 @@ const autoResolver = async (args, info, prisma) => {
   const prismaTree = prismaFunctions.getPrismaTree(query_tree, args);
   const prismaQuery = prismaFunctions.createQuery(prismaTree, prisma);
   const queryResult = await prismaQuery();
-  return queryResult;
+  return {[prismaTree.firstArgument]:queryResult};
 };
 
 module.exports = {
