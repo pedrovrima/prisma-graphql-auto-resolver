@@ -1,6 +1,6 @@
 const parseFields = require("graphql-parse-fields");
 
-const prismaFunctions = require("../src");
+const prismaFunctions = require("./functions");
 
 const autoResolver = async (args, info, prisma) => {
   const query_tree = parseFields(info, false);
