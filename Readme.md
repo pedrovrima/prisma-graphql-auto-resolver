@@ -1,6 +1,6 @@
 # Prisma-GraphQL Auto-Resolver
 
-This package exports a function that automatically creates a Prisma query based on GraphQL query information.
+This package exports a function that automatically creates a [Prisma Client query](https://www.prisma.io/docs/concepts/components/prisma-client/crud) based on GraphQL query information.
 
 It still has some limitations, that are listed below, but most of those should be solved as soon as an Prisma-GraphQL Auto-Modeler package is available.
 
@@ -12,7 +12,7 @@ npm install prisma-graphql-auto-resolver
 
 ## Usage
 
-This package is intended to be used on the resolver part of a GraphQL server. It uses information passed by the query (specifically the _args_ and _info_ parameters) to construct a prisma.io query.
+This package is intended to be used on the resolver part of a GraphQL server. It uses information passed by the query (specifically the _args_ and _info_ parameters) to construct a [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) query.
 
 It was designed to serve a unique/master query, responsible for fetching all types. Please see **Limitations** section below for further details.
 
@@ -60,7 +60,7 @@ const resolver = {
 
 ```
 
-Right now, the existence of the type AllTypes (or any other name, obviously) is required since when creating a query it will inform the name of the table prisma needs to query. For example, this GraphQL query:
+Right now, the existence of the type `AllType` (or any other name, obviously) is required since when creating a query it will inform the name of the table Prisma needs to query. For example, this GraphQL query:
 
 ```
 query{
@@ -76,7 +76,7 @@ query{
 }
 ```
 
-Will generate the Prisma query:
+Will generate this Prisma Client query:
 
 ```javascript
 prisma.users.findMany({
@@ -90,7 +90,7 @@ prisma.users.findMany({
 
 Right now, there are some limitations/rules that the models should follow for this package to work correctly:
 
-1. Types should have the same name as the ones described at the Prisma models;
+1. Types should have the same name as the ones described at the [Prisma models](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model);
 2. Types should have the same fields and same field names as the ones described at the Prisma models;
 3. There needs to be a master Type - somewhere where you connect a type to the name of the table (in prisma lower-case notation) [see AllTypes above]
 4. Queries with args are still a work in progress.
