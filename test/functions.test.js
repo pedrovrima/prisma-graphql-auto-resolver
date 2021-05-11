@@ -1,4 +1,4 @@
-const prismaFunctions = require("../src");
+const prismaFunctions = require("../src/functions");
 
 const tree = {
   user: {
@@ -14,7 +14,13 @@ const tree = {
   },
 };
 
-const prisma={ user: {findMany:(...args)=>{return(args)} }}
+const prisma = {
+  user: {
+    findMany: (...args) => {
+      return args;
+    },
+  },
+};
 
 const args = { user: { id: 1 }, posts: { id: 2 } };
 
@@ -67,24 +73,24 @@ test("fitler empty", () => {
   ).toEqual({ select: { id: 1 } });
 });
 
-// isInclude
+// isDeep
 
 test("is a include object", () => {
-  expect(prismaFunctions.isInclude(tree.user)).toBeTruthy();
+  expect(prismaFunctions.isDeep(tree.user)).toBeTruthy();
 });
 
 test("is not a include object", () => {
-  expect(prismaFunctions.isInclude(tree.user.id)).toBeFalsy();
+  expect(prismaFunctions.isDeep(tree.user.id)).toBeFalsy();
 });
-
+// OLD
 // getSelect
 
-test("get select objects", () => {
-  expect(prismaFunctions.getSelect(tree.user)).toEqual({
-    id: "true",
-    name: "true",
-  });
-});
+// test("get select objects", () => {
+//   expect(prismaFunctions.getSelect(tree.user)).toEqual({
+//     id: "true",
+//     name: "true",
+//   });
+// });
 
 // getWhere
 
@@ -92,14 +98,20 @@ test("get where from args", () => {
   expect(prismaFunctions.getWhere("user", args)).toEqual({ id: 1 });
 });
 
-// getInclude
+// getSelect NEW
 
-test("getInclude", () => {
-  expect(prismaFunctions.getInclude("user", tree, args, 1)).toEqual({
+test("getSelect", () => {
+  expect(prismaFunctions.getSelect("user", tree, args, 1)).toEqual({
+    id: "true",
+    name: "true",
+
     posts: {
-      select: { id: "true", date: "true" },
+      select: {
+        id: "true",
+        date: "true",
+        category: { select: { id: "true" } },
+      },
       where: { id: 2 },
-      include: { category: { select: { id: "true" } } },
     },
   });
 });
@@ -107,17 +119,18 @@ test("getInclude", () => {
 // prismaTree
 
 test("prismaTree", () => {
-  expect(prismaFunctions.prismaTree(tree, args)).toEqual({
+  expect(prismaFunctions.getPrismaTree(tree, args)).toEqual({
     firstArgument: "user",
     select: {
       id: "true",
       name: "true",
-    },
-    include: {
       posts: {
-        select: { id: "true", date: "true" },
+        select: {
+          id: "true",
+          date: "true",
+          category: { select: { id: "true" } },
+        },
         where: { id: 2 },
-        include: { category: { select: { id: "true" } } },
       },
     },
     where: { id: 1 },
@@ -127,6 +140,6 @@ test("prismaTree", () => {
 // createQuery
 
 test("createQuery", () => {
-  const queryFunction = prismaFunctions.createQuery(prismaTree,prisma);
+  const queryFunction = prismaFunctions.createQuery(prismaTree, prisma);
   expect(queryFunction()).toEqual(Query());
 });

@@ -1,16 +1,16 @@
 
-const isInclude = (object) => typeof object === "object";
+const isDeep = (object) => typeof object === "object";
 
-const getSelect = (tree) => {
-  const select = Object.keys(tree).reduce((select_container, obj) => {
-    if (!isInclude(tree[obj])) {
-      return { ...select_container, [obj]: tree[obj] };
-    } else {
-      return select_container;
-    }
-  }, {});
-  return select;
-};
+// const getSelect = (tree) => {
+//   const select = Object.keys(tree).reduce((select_container, obj) => {
+//     if (!isInclude(tree[obj])) {
+//       return { ...select_container, [obj]: tree[obj] };
+//     } else {
+//       return select_container;
+//     }
+//   }, {});
+//   return select;
+// };
 
 const isEmpty = (obj) => {
   return Object.keys(obj).length === 0;
@@ -37,37 +37,36 @@ const getWhere = (objectKey, args) => {
   return where;
 };
 
-const getInclude = (objectKey, tree, args, level) => {
-  const include = Object.keys(tree).reduce((include_container, objs) => {
-    if (isInclude(tree[objs])) {
+const getSelect = (objectKey, tree, args, level) => {
+  const select = Object.keys(tree).reduce((select_container, objs) => {
+    if (isDeep(tree[objs])) {
       const where = getWhere(objs, args);
-      const select = getSelect(tree[objs]);
-      const include = getInclude(objs, tree[objs], args, level + 1);
+      const select = getSelect(objs, tree[objs], args, level + 1);
       if (level == 1) {
-        return { ...include };
+        return { ...select };
       } else {
-        if (where & !select & !include) {
-          return { ...include_container, [objs]: "true" };
+        if (where & !select & !select) {
+          return { ...select_container, [objs]: "true" };
         } else {
           return {
-            ...include_container,
-            [objs]: filterEmptyObjects({ where, include, select }),
+            ...select_container,
+            [objs]: filterEmptyObjects({ where, select, select }),
           };
         }
       }
     } else {
-      return include_container;
+      return { ...select_container, [objs]: "true" };
     }
   }, {});
-  return include;
+  return select;
 };
 
 const getPrismaTree = (tree, args) => {
   const firstArgument = Object.keys(tree)[0];
-  const select = getSelect(tree[firstArgument]);
+  // const select = getSelect(tree[firstArgument]);
   const where = getWhere(firstArgument, args);
-  const include = getInclude("user", tree, args, 1);
-  return { firstArgument, where, select, include };
+  const select = getSelect("user", tree, args, 1);
+  return { firstArgument, where, select };
 };
 
 const createQuery = (prismaTree,prisma) => {
@@ -77,12 +76,11 @@ const createQuery = (prismaTree,prisma) => {
 
 
 module.exports = {
-    isInclude,
+    isDeep,
     isEmpty,
     filterEmptyObjects,
     getSelect,
     getWhere,
-    getInclude,
     getPrismaTree,
     createQuery,
   };
