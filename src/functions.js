@@ -1,4 +1,3 @@
-const parseFields = require("graphql-parse-fields");
 
 const isInclude = (object) => typeof object === "object";
 
@@ -76,3 +75,15 @@ const createQuery = (prismaTree,prisma) => {
   return () => prisma[firstArgument].findMany({ select, where, include });
 };
 
+
+module.exports = {
+    isInclude,
+    isEmpty,
+    filterEmptyObjects,
+    getSelect,
+    getWhere,
+    getInclude,
+    prismaTree,
+    createQuery,
+  };
+  
