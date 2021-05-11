@@ -62,7 +62,7 @@ const getInclude = (objectKey, tree, args, level) => {
   return include;
 };
 
-const prismaTree = (tree, args) => {
+const getPrismaTree = (tree, args) => {
   const firstArgument = Object.keys(tree)[0];
   const select = getSelect(tree[firstArgument]);
   const where = getWhere(firstArgument, args);
@@ -83,7 +83,7 @@ module.exports = {
     getSelect,
     getWhere,
     getInclude,
-    prismaTree,
+    getPrismaTree,
     createQuery,
   };
   
