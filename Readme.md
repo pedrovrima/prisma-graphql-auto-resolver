@@ -52,7 +52,7 @@ const models = `
 const resolver = {
     Query:{
         masterQuery= async (parent, args, context, info) => {
-            const query_result = await autoResolver(parent,args,context, info,prisma)
+            const query_result = await autoResolver(args, info, prisma)
             return query_result
         }
     }
