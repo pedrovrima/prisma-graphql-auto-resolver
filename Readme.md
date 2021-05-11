@@ -60,7 +60,7 @@ const resolver = {
 
 ```
 
-Right now, the existence of the type `AllType` (or any other name, obviously) is required since when creating a query it will inform the name of the table Prisma needs to query. For example, this GraphQL query:
+Right now, the existence of the type `AllTypes` (or any other name, obviously) is required since when creating a query it will inform the name of the table Prisma needs to query. For example, this GraphQL query:
 
 ```
 query{
@@ -80,11 +80,11 @@ Will generate this Prisma Client query:
 
 ```javascript
 prisma.users.findMany({
-  select: { id: true, name: true },
-  include: { posts: { select: { title: true } } },
-});
+  select: { id: true, name: true ,
+   posts: { select: { title: true } } },
+    }
+);
 ```
-
 
 ## Limitations
 
@@ -98,4 +98,3 @@ Right now, there are some limitations/rules that the models should follow for th
 Limitation 1 and 2 should be solved as soon as a Prisma-to-GraphQL package is done (and I'm working on it =));
 Right now, there are no plans to overcome number 3;
 Limitation number 4 is under work.
-
